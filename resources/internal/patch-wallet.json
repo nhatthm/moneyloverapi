@@ -1,0 +1,7 @@
+[
+    {
+        "op": "add",
+        "path": "/components/schemas/User/x-go-type",
+        "value": "github.com/nhatthm/moneyloverapi/pkg/user.User"
+    }
+]

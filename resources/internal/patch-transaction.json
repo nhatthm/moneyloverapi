@@ -1,0 +1,27 @@
+[
+    {
+        "op": "add",
+        "path": "/components/schemas/Category/x-go-type",
+        "value": "github.com/nhatthm/moneyloverapi/pkg/category.Category"
+    },
+    {
+        "op": "add",
+        "path": "/components/schemas/Transaction/properties/displayDate/x-go-type",
+        "value": "time.Time"
+    },
+    {
+        "op": "add",
+        "path": "/components/schemas/Transaction/properties/createdAt/x-go-type",
+        "value": "time.Time"
+    },
+    {
+        "op": "add",
+        "path": "/components/schemas/User/x-go-type",
+        "value": "github.com/nhatthm/moneyloverapi/pkg/user.User"
+    },
+    {
+        "op": "add",
+        "path": "/components/schemas/Wallet/x-go-type",
+        "value": "github.com/nhatthm/moneyloverapi/pkg/wallet.Wallet"
+    }
+]

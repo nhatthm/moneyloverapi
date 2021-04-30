@@ -1,0 +1,356 @@
+openapi: "3.0.0"
+info:
+  description: "Collection of observed API calls and methods. No guarantees are provided that they are still functioning as specified."
+  version: "0.1"
+  title: "MoneyLover unofficial OpenAPI definition"
+  contact:
+    email: "contact@moneylover.me"
+
+servers:
+  - url: "https://web.moneylover.me/api"
+
+paths:
+  /user/login-url:
+    post:
+      tags:
+        - auth
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+
+  /token:
+    post:
+      tags:
+        - auth
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+        - in: header
+          name: client
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+
+  /category/list-all:
+    post:
+      tags:
+        - category
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListCategoryResponse"
+
+  /transaction/list:
+    post:
+      tags:
+        - transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListTransactionRequest'
+      responses:
+        200:
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTransactionResponse"
+
+components:
+  schemas:
+    LoginResponse:
+      type: object
+      properties:
+        error:
+          type: integer
+        msg:
+          type: string
+        action:
+          type: string
+        data:
+          type: object
+          properties:
+            status:
+              type: boolean
+            request_token:
+              type: string
+            login_url:
+              type: string
+              format: uri
+          required:
+            - login_url
+      required:
+        - data
+
+    TokenRequest:
+      type: object
+      properties:
+        client_info:
+          type: boolean
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+
+    TokenResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        access_token:
+          type: string
+          format: byte
+        expire:
+          type: string
+          minimum: 0
+        refresh_token:
+          type: string
+          format: byte
+        client_info:
+          type: object
+          properties:
+            name:
+              type: string
+            internal:
+              type: boolean
+      required:
+        - access_token
+        - expire
+        - refresh_token
+
+    ListCategoryResponse:
+      type: object
+      properties:
+        error:
+          type: integer
+        msg:
+          type: string
+        action:
+          type: string
+        data:
+          $ref: "#/components/schemas/FlatCategories"
+      required:
+        - data
+
+    ListTransactionRequest:
+      type: object
+      properties:
+        walletId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+      required:
+        - walletId
+        - startDate
+        - endDate
+
+    ListTransactionResponse:
+      type: object
+      properties:
+        error:
+          type: integer
+        msg:
+          type: string
+        action:
+          type: string
+        data:
+          type: object
+          properties:
+            daterange:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+            transactions:
+              $ref: "#/components/schemas/Transactions"
+          required:
+            - transactions
+      required:
+        - data
+
+    Categories:
+      type: array
+      items:
+        $ref: "#/components/schemas/Category"
+
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        account:
+          type: string
+        type:
+          type: integer
+        metadata:
+          type: string
+        parent:
+          $ref: "#/components/schemas/Category"
+      required:
+        - _id
+        - name
+
+    FlatCategories:
+      type: array
+      items:
+        $ref: "#/components/schemas/FlatCategory"
+
+    FlatCategory:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        icon:
+          type: string
+        account:
+          type: string
+        type:
+          type: integer
+        metadata:
+          type: string
+        parent:
+          type: string
+      required:
+        - _id
+        - name
+
+    Transactions:
+      type: array
+      items:
+        $ref: "#/components/schemas/Transaction"
+
+    Transaction:
+      type: object
+      properties:
+        _id:
+          type: string
+        note:
+          type: string
+        account:
+          $ref: "#/components/schemas/Wallet"
+        category:
+          $ref: "#/components/schemas/Category"
+        amount:
+          type: number
+          format: double
+        lastEditBy:
+          $ref: "#/components/schemas/User"
+        longitude:
+          type: number
+          format: float
+        latitude:
+          type: number
+          format: float
+        address:
+          type: string
+        displayDate:
+          type: string
+          format: date-time
+        remind:
+          type: integer
+        exclude_report:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - _id
+        - note
+        - account
+        - category
+        - displayDate
+        - createdAt
+
+    Wallets:
+      type: array
+      items:
+        $ref: "#/components/schemas/Wallet"
+
+    Wallet:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        currency_id:
+          type: integer
+        owner:
+          type: string
+        sortIndex:
+          type: integer
+        transaction_notification:
+          type: boolean
+        archived:
+          type: boolean
+        account_type:
+          type: integer
+        exclude_total:
+          type: boolean
+        icon:
+          type: string
+        isDelete:
+          type: boolean
+        listUser:
+          $ref: "#/components/schemas/Users"
+      required:
+        - _id
+        - name
+
+    Users:
+      type: array
+      items:
+        $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - _id
+        - email
