@@ -17,7 +17,7 @@ The client is built on a collection of observed API calls and methods.
 
 ## Prerequisites
 
-- `Go >= 1.15`
+- `Go >= 1.16`
 
 ## Install
 
