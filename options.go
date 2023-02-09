@@ -3,7 +3,7 @@ package moneyloverapi
 import (
 	"time"
 
-	"github.com/nhatthm/go-clock"
+	"go.nhat.io/clock"
 
 	"github.com/nhatthm/moneyloverapi/pkg/auth"
 )

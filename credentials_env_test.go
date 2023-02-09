@@ -27,11 +27,8 @@ func TestCredentialsFromEnv(t *testing.T) {
 		require.NoError(t, err)
 	})
 
-	err := os.Setenv(envUsername, "username")
-	require.NoError(t, err)
-
-	err = os.Setenv(envPassword, "password")
-	require.NoError(t, err)
+	t.Setenv(envUsername, "username")
+	t.Setenv(envPassword, "password")
 
 	p := moneyloverapi.CredentialsFromEnv()
 

@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/nhatthm/httpmock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"go.nhat.io/httpmock"
+	plannerMock "go.nhat.io/httpmock/mock/planner"
+	"go.nhat.io/httpmock/planner"
 
 	"github.com/nhatthm/moneyloverapi/pkg/auth"
 )
@@ -26,8 +29,21 @@ func TestServer_Expect(t *testing.T) {
 
 	accessToken := `ACCESS_TOKEN`
 
-	s := MockEmptyServer(func(s *Server) {
-		s.WithAccessToken(accessToken)
+	var e planner.Expectation
+
+	p := plannerMock.Mock(func(p *plannerMock.Planner) {
+		p.On("Expect", mock.Anything).
+			Run(func(args mock.Arguments) {
+				e = args[0].(planner.Expectation) //nolint: errcheck
+			})
+
+		p.On("IsEmpty").Return(true)
+	})(t)
+
+	MockEmptyServer(func(s *Server) {
+		s.WithPlanner(p).
+			WithAccessToken(accessToken)
+
 		s.Expect(http.MethodGet, "/")
 	})(t)
 
@@ -35,14 +51,19 @@ func TestServer_Expect(t *testing.T) {
 		"Authorization": fmt.Sprintf("AuthJWT %s", accessToken),
 	}
 
-	assert.Equal(t, http.MethodGet, s.ExpectedRequests[0].Method)
-	assert.Equal(t, httpmock.Exact("/"), s.ExpectedRequests[0].RequestURI)
+	assert.Equal(t, http.MethodGet, e.Method())
+	assert.Equal(t, httpmock.Exact("/"), e.URIMatcher())
 
-	for key, matcher := range s.ExpectedRequests[0].RequestHeader {
-		assert.True(t, matcher.Match(expectedHeaders[key]))
+	requestHeader := e.HeaderMatcher()
+
+	assert.Len(t, requestHeader, 1)
+
+	for key, m := range requestHeader {
+		matched, err := m.Match(expectedHeaders[key])
+
+		assert.True(t, matched)
+		assert.NoError(t, err)
 	}
-
-	s.ResetExpectations()
 }
 
 func TestServer_ExpectAliases(t *testing.T) {
@@ -104,21 +125,40 @@ func TestServer_ExpectAliases(t *testing.T) {
 		t.Run(tc.scenario, func(t *testing.T) {
 			t.Parallel()
 
-			s := MockEmptyServer(tc.mockServer)(t)
+			var e planner.Expectation
+
+			p := plannerMock.Mock(func(p *plannerMock.Planner) {
+				p.On("Expect", mock.Anything).
+					Run(func(args mock.Arguments) {
+						e = args[0].(planner.Expectation) //nolint: errcheck
+					})
+
+				p.On("IsEmpty").Return(true)
+			})(t)
+
+			s := MockEmptyServer(func(s *Server) {
+				s.WithPlanner(p)
+			}, tc.mockServer)(t)
+
 			s.WithAccessToken(accessToken)
 
 			expectedHeaders := httpmock.Header{
 				"Authorization": fmt.Sprintf("AuthJWT %s", accessToken),
 			}
 
-			assert.Equal(t, tc.expectedMethod, s.ExpectedRequests[0].Method)
-			assert.Equal(t, httpmock.Exact("/"), s.ExpectedRequests[0].RequestURI)
+			assert.Equal(t, tc.expectedMethod, e.Method())
+			assert.Equal(t, httpmock.Exact("/"), e.URIMatcher())
 
-			for key, matcher := range s.ExpectedRequests[0].RequestHeader {
-				assert.True(t, matcher.Match(expectedHeaders[key]))
+			requestHeader := e.HeaderMatcher()
+
+			assert.Len(t, requestHeader, 1)
+
+			for key, m := range requestHeader {
+				matched, err := m.Match(expectedHeaders[key])
+
+				assert.True(t, matched)
+				assert.NoError(t, err)
 			}
-
-			s.ResetExpectations()
 		})
 	}
 }

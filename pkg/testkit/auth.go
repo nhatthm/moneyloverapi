@@ -6,18 +6,20 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/nhatthm/httpmock"
+	"go.nhat.io/httpmock"
+	"go.nhat.io/httpmock/matcher"
+
 	"github.com/nhatthm/moneyloverapi/internal/api"
 	"github.com/nhatthm/moneyloverapi/internal/types"
 )
 
-func expectAuthLoginURL(s *Server) *Request {
+func expectAuthLoginURL(s *Server) Expectation {
 	return s.Server.ExpectPost("/user/login-url")
 }
 
-func expectLogin(s *Server, username, password string) *Request {
+func expectLogin(s *Server, username, password string) Expectation {
 	return s.ExpectPost("/token").
-		WithHeader("Authorization", func() httpmock.Matcher {
+		WithHeader("Authorization", func() matcher.Matcher {
 			return httpmock.Exactf("Bearer %s", s.RequestToken())
 		}).
 		WithHeader("client", client).
@@ -41,11 +43,11 @@ func WithAuthLoginURLFailure() ServerOption {
 func WithAuthLoginURLSuccess() ServerOption {
 	return func(s *Server) {
 		expectAuthLoginURL(s).
-			WithHandler(func(r *http.Request) ([]byte, error) {
+			Run(func(r *http.Request) ([]byte, error) {
 				s.WithRequestToken(requestToken())
 				token := string(s.RequestToken())
 
-				loginURL, _ := url.Parse(s.URL() + "/auth") // nolint: errcheck
+				loginURL, _ := url.Parse(s.URL() + "/auth") //nolint: errcheck
 				loginParams := loginURL.Query()
 				loginParams.Set("client", client)
 				loginParams.Set("token", token)
@@ -80,7 +82,7 @@ func WithAuthTokenFailure(username, password string) ServerOption {
 func WithAuthTokenSuccess(username, password string) ServerOption {
 	return func(s *Server) {
 		expectLogin(s, username, password).
-			WithHandler(func(r *http.Request) ([]byte, error) {
+			Run(func(r *http.Request) ([]byte, error) {
 				s.WithAccessToken(accessToken())
 				s.WithRefreshToken(refreshToken())
 

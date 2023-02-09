@@ -4,7 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/nhatthm/go-clock"
+	"go.nhat.io/clock"
+
 	"github.com/nhatthm/moneyloverapi/internal/api"
 	"github.com/nhatthm/moneyloverapi/pkg/auth"
 )

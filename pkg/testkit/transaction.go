@@ -7,7 +7,7 @@ import (
 	"github.com/nhatthm/moneyloverapi/pkg/transaction"
 )
 
-func expectFindAllTransactionsInRange(s *Server, walletID string, from, to time.Time) *Request {
+func expectFindAllTransactionsInRange(s *Server, walletID string, from, to time.Time) Expectation {
 	return s.ExpectPost("/transaction/list").
 		WithBodyJSON(api.ListTransactionRequest{
 			WalletID:  walletID,

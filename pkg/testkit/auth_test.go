@@ -19,7 +19,7 @@ func TestWithAuthLoginURLFailure(t *testing.T) {
 		testkit.WithAuthLoginURLFailure(),
 	)(t)
 
-	code, _, _, _ := request(t, s.URL(), http.MethodPost, "/user/login-url", nil, nil) // nolint:dogsled
+	code, _, _, _ := request(t, s.URL(), http.MethodPost, "/user/login-url", nil, nil) //nolint:dogsled
 
 	assert.Equal(t, http.StatusInternalServerError, code)
 }
@@ -69,7 +69,7 @@ func TestWithAuthTokenFailure(t *testing.T) {
 		username, password,
 	)
 
-	code, _, _, _ := request(t, s.URL(), http.MethodPost, "/token", requestHeader, []byte(requestBody)) // nolint:dogsled
+	code, _, _, _ := request(t, s.URL(), http.MethodPost, "/token", requestHeader, []byte(requestBody)) //nolint:dogsled
 
 	assert.Equal(t, http.StatusUnauthorized, code)
 }
