@@ -37,11 +37,10 @@ type accessClaim struct {
 	Exp         int64       `json:"exp"`
 }
 
-// nolint: errcheck
-func token(claim interface{}) string {
+func token(claim interface{}) string { //nolint: errcheck,nolintlint
 	signingKey := jose.SigningKey{Algorithm: jose.HS256, Key: []byte("")}
-	signer, _ := jose.NewSigner(signingKey, (&jose.SignerOptions{}).WithType("JWT"))
-	token, _ := jwt.Signed(signer).Claims(claim).CompactSerialize()
+	signer, _ := jose.NewSigner(signingKey, (&jose.SignerOptions{}).WithType("JWT")) //nolint: errcheck
+	token, _ := jwt.Signed(signer).Claims(claim).CompactSerialize()                  //nolint: errcheck
 
 	return token
 }

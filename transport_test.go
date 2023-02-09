@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nhatthm/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"go.nhat.io/httpmock"
 
 	"github.com/nhatthm/moneyloverapi"
 	"github.com/nhatthm/moneyloverapi/pkg/testkit/auth"
@@ -84,7 +84,7 @@ func TestRoundTripper_Error(t *testing.T) {
 	})(t)
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	resp, err := moneyloverapi.TokenRoundTripper(p, nil)(req) // nolint:bodyclose
+	resp, err := moneyloverapi.TokenRoundTripper(p, nil)(req) //nolint:bodyclose
 
 	assert.Nil(t, resp)
 	assert.NotNil(t, err)

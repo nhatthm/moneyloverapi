@@ -10,7 +10,8 @@ import (
 	"time"
 
 	"github.com/bool64/ctxd"
-	clock "github.com/nhatthm/go-clock"
+	"go.nhat.io/clock"
+
 	"github.com/nhatthm/moneyloverapi/internal/api"
 	"github.com/nhatthm/moneyloverapi/pkg/auth"
 )
@@ -135,7 +136,7 @@ func (p *apiTokenProvider) WithTimeout(timeout time.Duration) *apiTokenProvider 
 	return p
 }
 
-// nolint:unparam
+//nolint:unparam
 func (p *apiTokenProvider) WithStorage(storage auth.TokenStorage) *apiTokenProvider {
 	p.mu.Lock()
 	defer p.mu.Unlock()

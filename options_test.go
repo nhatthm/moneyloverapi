@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	mockClock "github.com/nhatthm/go-clock/mock"
 	"github.com/stretchr/testify/assert"
+	mockClock "go.nhat.io/clock/mock"
 
 	authMock "github.com/nhatthm/moneyloverapi/pkg/testkit/auth"
 )

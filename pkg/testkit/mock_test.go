@@ -8,9 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nhatthm/httpmock"
-	"github.com/nhatthm/moneyloverapi/pkg/testkit"
 	"github.com/stretchr/testify/assert"
+	"go.nhat.io/httpmock"
+
+	"github.com/nhatthm/moneyloverapi/pkg/testkit"
 )
 
 func TestMockServer(t *testing.T) {
@@ -84,7 +85,7 @@ func TestMockEmptyServer(t *testing.T) {
 	httpmock.AssertHeaderContains(t, headers, expectedHeaders)
 }
 
-// nolint:thelper
+//nolint:thelper
 func request(
 	t *testing.T,
 	baseURL string,

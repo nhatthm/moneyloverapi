@@ -6,12 +6,13 @@ import (
 	"testing"
 	"time"
 
-	clock "github.com/nhatthm/go-clock/mock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	clock "go.nhat.io/clock/mock"
+
 	"github.com/nhatthm/moneyloverapi/pkg/auth"
 	"github.com/nhatthm/moneyloverapi/pkg/testkit"
 	authMock "github.com/nhatthm/moneyloverapi/pkg/testkit/auth"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 func TestApiTokenProvider_GetToken(t *testing.T) {
@@ -31,7 +32,7 @@ func TestApiTokenProvider_GetToken(t *testing.T) {
 		{
 			scenario:   "could not get token from storage",
 			mockServer: testkit.MockEmptyServer(),
-			configure: func(t *testing.T, p *apiTokenProvider) { // nolint: thelper
+			configure: func(t *testing.T, p *apiTokenProvider) { //nolint: thelper
 				s := authMock.MockTokenStorage(func(s *authMock.TokenStorage) {
 					s.On("Get", context.Background(), storageKey).
 						Return(auth.OAuthToken{}, errors.New("get token error"))
@@ -62,7 +63,7 @@ func TestApiTokenProvider_GetToken(t *testing.T) {
 				testkit.WithAuthLoginURLSuccess(),
 				testkit.WithAuthTokenSuccess(username, password),
 			),
-			configure: func(t *testing.T, p *apiTokenProvider) { // nolint: thelper
+			configure: func(t *testing.T, p *apiTokenProvider) { //nolint: thelper
 				s := authMock.MockTokenStorage(func(s *authMock.TokenStorage) {
 					s.On("Get", context.Background(), storageKey).
 						Return(auth.OAuthToken{}, nil)
