@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -22,7 +21,7 @@ func (s UnixString) Sec() int64 {
 
 // String returns a unix timestamp string.
 func (s UnixString) String() string {
-	return fmt.Sprintf("%d", s.Sec())
+	return strconv.FormatInt(s.Sec(), 10)
 }
 
 // MarshalJSON satisfies json.Marshaler interface.
