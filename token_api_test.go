@@ -128,7 +128,7 @@ func TestApiTokenProvider_GetToken_MissingCredentials(t *testing.T) {
 		{
 			scenario:      "missing password",
 			credentials:   Credentials("username", ""),
-			expectedError: "could not get token: missing password",
+			expectedError: "unexpected response: unexpected response status: 403 Forbidden",
 		},
 	}
 
